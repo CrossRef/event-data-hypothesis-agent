@@ -1,5 +1,7 @@
 # Crossref Event Data Hypothes.is Agent
 
+Monitors the Hypothes.is annotation service for annotations to Works that have DOIs. Also looks for people who mention Works that have DOIs in the annotation.
+
 ## Tests
 
 ### Unit tests

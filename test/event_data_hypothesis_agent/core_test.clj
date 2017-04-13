@@ -33,27 +33,41 @@
  :text
  "I agree, I don't think they are taking the right action even though the law is murky."})
 
-(def expected-action
-    {:id "hypothesis-5vfZnh7YEeelbJvmtQoBvQ",
+(def expected-actions
+  [{:id "hypothesis-5vfZnh7YEeelbJvmtQoBvQ",
+    :url "https://hypothes.is/a/5vfZnh7YEeelbJvmtQoBvQ",
+    :relation-type-id "annotates",
+    :occurred-at "2017-04-11T17:04:19Z",
+    :observations
+    [{:type :url,
+      :input-url "https://www.aclu.org/other/joint-statement-current-law-religion-public-schools"}],
+    :extra {},
+    :subj
+    {:json-url "https://hypothes.is/api/annotations/5vfZnh7YEeelbJvmtQoBvQ",
+     :pid "https://hypothes.is/a/5vfZnh7YEeelbJvmtQoBvQ",
+     :url "https://hyp.is/rQfcjv4_EeaOmPNbl5cVgQ/www.aclu.org/other/joint-statement-current-law-religion-public-schools",
+     :type "annotation",
+     :title "I agree, I don't think they are taking the right action even though the law is murky.",
+     :issued "2017-04-11T17:04:19Z"
+     :alternative-id "5vfZnh7YEeelbJvmtQoBvQ"}}
+
+    {:id "hypothesis-5vfZnh7YEeelbJvmtQoBvQ-text",
      :url "https://hypothes.is/a/5vfZnh7YEeelbJvmtQoBvQ",
-     :relation-type-id "annotates",
+     :relation-type-id "discusses",
      :occurred-at "2017-04-11T17:04:19Z",
      :observations
-     [{:type :url,
-       :input-url
-       "https://www.aclu.org/other/joint-statement-current-law-religion-public-schools"}],
+     [{:type :plaintext
+       :input-content "I agree, I don't think they are taking the right action even though the law is murky."}],
      :extra {},
      :subj
-     {:json-url
-      "https://hypothes.is/api/annotations/5vfZnh7YEeelbJvmtQoBvQ",
+     {:json-url "https://hypothes.is/api/annotations/5vfZnh7YEeelbJvmtQoBvQ",
       :pid "https://hypothes.is/a/5vfZnh7YEeelbJvmtQoBvQ",
-      :url
-      "https://hyp.is/rQfcjv4_EeaOmPNbl5cVgQ/www.aclu.org/other/joint-statement-current-law-religion-public-schools",
+      :url "https://hyp.is/rQfcjv4_EeaOmPNbl5cVgQ/www.aclu.org/other/joint-statement-current-law-religion-public-schools",
       :type "annotation",
-      :title
-      "I agree, I don't think they are taking the right action even though the law is murky.",
-      :issued "2017-04-11T17:04:19Z"}})
+      :title "I agree, I don't think they are taking the right action even though the law is murky.",
+      :issued "2017-04-11T17:04:19Z"
+      :alternative-id "5vfZnh7YEeelbJvmtQoBvQ"}}])
 
 (deftest can-parse-item
   (testing "Input parsed JSON can be parsed into Action with Observations."
-    (is (= (core/api-item-to-action input) expected-action))))
+    (is (= (core/api-item-to-actions input) expected-actions))))

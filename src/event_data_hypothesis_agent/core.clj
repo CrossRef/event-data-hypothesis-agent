@@ -29,9 +29,12 @@
 (def date-format
   (:date-time-no-ms clj-time-format/formatters))
 
-(defn api-item-to-action
+(defn api-item-to-actions
   [item]
   (let [occurred-at-iso8601 (clj-time-format/unparse date-format (coerce/from-string (:updated item)))]
+    ; Return one action that represents "this annotation is about this DOI".
+    ; ID is legacy from first version where there was only one kind of action per annotation.
+    [
     {:id (str "hypothesis-" (:id item))
      :url (-> item :links :html)
      :relation-type-id "annotates"
@@ -42,9 +45,26 @@
       :json-url (-> item :links :json)
       :pid (-> item :links :html)
       :url (-> item :links :incontext)
+      :alternative-id (:id item)
       :type "annotation"
       :title (-> item :text)
-      :issued occurred-at-iso8601}}))
+      :issued occurred-at-iso8601}}
+
+    ; And one that says "this annotation mentions these DOIs".
+    {:id (str "hypothesis-" (:id item) "-text")
+     :url (-> item :links :html)
+     :relation-type-id "discusses"
+     :occurred-at occurred-at-iso8601
+     :observations [{:type :plaintext :input-content (-> item :text)}]
+     :extra {}
+     :subj {
+      :json-url (-> item :links :json)
+      :pid (-> item :links :html)
+      :url (-> item :links :incontext)
+      :alternative-id (:id item)
+      :type "annotation"
+      :title (-> item :text)
+      :issued occurred-at-iso8601}}]))
 
 ; API
 (defn parse-page
@@ -52,7 +72,7 @@
   [url json-data]
   (let [parsed (json/read-str json-data :key-fn keyword)]
     {:url url
-     :actions (map api-item-to-action (-> parsed :rows))}))
+     :actions (mapcat api-item-to-actions (-> parsed :rows))}))
 
 (defn fetch-page
   [offset]
