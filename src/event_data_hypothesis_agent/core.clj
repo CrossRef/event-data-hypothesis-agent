@@ -145,6 +145,7 @@
 (def agent-definition
   {:agent-name "hypothesis-agent"
    :version version
+   :jwt (:hypothesis-jwt env)
    :schedule [{:name "retrieve-all"
               :seconds 14400 ; wait four hours between scans
               :fixed-delay true
