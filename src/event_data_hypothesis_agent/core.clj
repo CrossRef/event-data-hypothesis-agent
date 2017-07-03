@@ -10,7 +10,6 @@
             [throttler.core :refer [throttle-fn]]
             [clj-http.client :as client]
             [config.core :refer [env]]
-            [clojure.core.async :refer [>!!]]
             [robert.bruce :refer [try-try-again]]
             [clj-time.format :as clj-time-format])
   (:import [java.util UUID]
@@ -76,7 +75,7 @@
 
 (defn fetch-page
   [offset]
-  (status/add! "hypothesis-agent" "hypothesis" "fetch-page" 1)  
+  (status/send! "hypothesis-agent" "hypothesis" "fetch-page" 1)  
   ; If the API returns an error
   (try
     (try-try-again
@@ -126,21 +125,21 @@
     (take-while (partial all-action-dates-after? date) pages)))
 
 (defn retrieve-all
-  [artifacts bundle-chan]
+  [artifacts callback]
   (log/info "Start crawl all hypothesis at" (str (clj-time/now)))
-  (status/add! "hypothesis-agent" "process" "scan" 1)
+  (status/send! "hypothesis-agent" "process" "scan" 1)
   (let [counter (atom 0)
         cutoff-date (-> 12 clj-time/hours clj-time/ago)]
     (let [pages (fetch-parsed-pages-after cutoff-date)]
       (doseq [page pages]
-          (let [package {:source-token source-token
+          (let [evidence-record {:source-token source-token
                    :source-id "hypothesis"
                    :license license
                    :agent {:version version}
                    :extra {:cutoff-date (str cutoff-date)}
                    :pages [page]}]
-        (log/info "Sending package...")
-        (>!! bundle-chan package)))))
+        (log/info "Sending evidence record...")
+        (callback evidence-record)))))
   (log/info "Finished scan."))
 
 (def agent-definition
